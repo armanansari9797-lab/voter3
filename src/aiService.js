@@ -1,6 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 
 const genAI = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
+const responseCache = new Map();
 
 /**
  * AI Service for CivicGuide.
@@ -13,14 +14,27 @@ export const aiService = {
      * @param {Object} context - The knowledge base context for grounded responses.
      */
     async generateResponse(userPrompt, context) {
+        const cacheKey = userPrompt.toLowerCase().trim();
+        if (responseCache.has(cacheKey)) {
+            console.log("Serving AI response from cache");
+            return responseCache.get(cacheKey);
+        }
+
         try {
+            // Efficiency: Only send essential context to reduce token count
+            const minimizedContext = {
+                registration: context.registration?.text,
+                timeline: context.timeline?.text,
+                process: context.process?.text,
+                documents: context.documents?.text
+            };
+
             const systemContext = `
                 You are CivicGuide, a helpful election assistant. 
-                Use the following knowledge base if relevant, but answer based on your broad knowledge of election processes if the specific question isn't there.
+                Context from our official guide: ${JSON.stringify(minimizedContext)}
                 
-                Knowledge Base Summary: ${JSON.stringify(context)}
-                
-                Keep your answer concise (max 3 sentences), friendly, and encouraging of civic participation.
+                Answer based on the guide first. If the information isn't there, use your broad knowledge.
+                Keep answers concise (max 3 sentences), friendly, and encourage voting.
             `;
 
             const result = await genAI.models.generateContent({
@@ -28,13 +42,15 @@ export const aiService = {
                 contents: systemContext + "\n\nUser Query: " + userPrompt
             });
 
-            return {
+            const responseData = {
                 text: result.text || "I'm here to help with your election questions!",
                 isAI: true
             };
+
+            responseCache.set(cacheKey, responseData);
+            return responseData;
         } catch (error) {
             console.error("Gemini AI failed:", error);
-            // Fallback to a helpful message if AI fails
             return null;
         }
     }

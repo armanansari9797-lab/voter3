@@ -11,7 +11,7 @@ This document outlines the security measures implemented in the CivicGuide Elect
 - **Content Security Policy (CSP)**: Implemented via meta tags to restrict script execution and prevent Cross-Site Scripting (XSS) and data injection attacks.
 
 ## 3. Data Protection
-- **XSS Mitigation**: All user-generated content and bot responses are sanitized using a custom `escapeHTML` utility before being rendered in the DOM.
+- **XSS Prevention**: The application employs a strict **DOM-first rendering strategy**. Instead of `innerHTML`, it uses a custom `domUtils` layer that relies on `document.createElement` and `textContent`. This eliminates the risk of XSS at the architectural level.
 - **Secure Transport**: The application is served over HTTPS, and all Firebase interactions use secure, encrypted channels.
 
 ## 4. Monitoring & Analytics
