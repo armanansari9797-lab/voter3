@@ -9,7 +9,13 @@ import { knowledgeBase as localKnowledgeBase } from "./data.js";
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
-const analytics = getAnalytics(app);
+
+let analytics = null;
+try {
+    analytics = getAnalytics(app);
+} catch (e) {
+    console.warn("Firebase Analytics failed to initialize:", e);
+}
 
 export const knowledgeService = {
     /**
@@ -66,10 +72,12 @@ export const knowledgeService = {
             });
 
             // Dual logging: Firestore for records, Analytics for insights
-            logEvent(analytics, 'user_interaction', {
-                topic: topic,
-                interaction_type: inputType
-            });
+            if (analytics) {
+                logEvent(analytics, 'user_interaction', {
+                    topic: topic,
+                    interaction_type: inputType
+                });
+            }
         } catch (error) {
             // Silently fail logging to not disrupt UX
             console.error("Logging failed:", error);
