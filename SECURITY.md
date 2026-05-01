@@ -7,12 +7,13 @@ This document outlines the security measures implemented in the CivicGuide Elect
 - **Controlled Access Patterns**: All database interactions are governed by **Firestore Security Rules**, ensuring users can only write to their own interaction logs and cannot read data from other users.
 
 ## 2. Infrastructure Security
+- **Hardened CSP**: Strict Content Security Policy that mitigates XSS by disabling `unsafe-eval` and whitelisting only trusted Google/Firebase domains.
 - **Environment Variable Protection**: All Firebase API keys and project identifiers are managed via Vite `.env` files, preventing exposure in the source code.
-- **Content Security Policy (CSP)**: Implemented via meta tags to restrict script execution and prevent Cross-Site Scripting (XSS) and data injection attacks.
 
-## 3. Data Protection
-- **XSS Prevention**: The application employs a strict **DOM-first rendering strategy**. Instead of `innerHTML`, it uses a custom `domUtils` layer that relies on `document.createElement` and `textContent`. This eliminates the risk of XSS at the architectural level.
+## 3. Safe Rendering & Data Protection
+- **Safe-by-Design Rendering**: Complete elimination of `innerHTML` in favor of `document.createElement`. All user and AI content is treated as text nodes, preventing script injection at the architectural level.
 - **Secure Transport**: The application is served over HTTPS, and all Firebase interactions use secure, encrypted channels.
+- **Firestore Security Rules**: Strict schema validation and origin checks to ensure data integrity for interaction logs.
 
 ## 4. Monitoring & Analytics
 - **Google Analytics Integration**: Used for professional session tracking and interaction monitoring.

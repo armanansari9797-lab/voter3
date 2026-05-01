@@ -68,6 +68,20 @@ export const knowledgeBase = {
             "Q: Can I register on election day? A: Some states allow same-day registration, others require it weeks in advance."
         ],
         options: [
+            { text: "Educational Resources", action: "resources" },
+            { text: "Go back to start", action: "greeting" }
+        ]
+    },
+    resources: {
+        text: "Knowledge is power! Here are some official resources to help you stay informed:",
+        steps: [
+            "Vote.gov: Official US government site for voter registration info.",
+            "EAC.gov: Election Assistance Commission for procedural standards.",
+            "Local Election Office: Your primary source for local deadlines.",
+            "Non-partisan Guides: Check sites like Ballotpedia or League of Women Voters."
+        ],
+        options: [
+            { text: "How do I register?", action: "registration" },
             { text: "Go back to start", action: "greeting" }
         ]
     },
@@ -75,7 +89,7 @@ export const knowledgeBase = {
         text: "I'm not quite sure about that specific question, but I'm learning every day! I can help you with registration, timelines, the voting process, or required documents.",
         options: [
             { text: "How do I register?", action: "registration" },
-            { text: "View FAQ", action: "faq" }
+            { text: "Educational Resources", action: "resources" }
         ]
     }
 };

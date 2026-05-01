@@ -26,11 +26,13 @@ describe('UIController', () => {
         ui = new UIController(mockCallbacks);
     });
 
-    test('addUserMessage adds message to DOM', () => {
+    test('addUserMessage adds message and timestamp to DOM', () => {
         ui.addUserMessage('Hello world');
         const messages = document.querySelectorAll('.message.user');
+        const timestamp = document.querySelector('.message-timestamp');
         expect(messages.length).toBe(1);
         expect(messages[0].textContent).toContain('Hello world');
+        expect(timestamp).not.toBeNull();
     });
 
     test('addBotMessage adds message and options', () => {

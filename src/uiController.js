@@ -64,16 +64,24 @@ export class UIController {
         });
     }
 
+    getTimestamp() {
+        return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
     addUserMessage(text) {
+        const timestamp = this.getTimestamp();
         const message = domUtils.el('div', { 
             className: 'message user', 
             role: 'article',
-            'aria-label': 'User message'
+            'aria-label': `User message sent at ${timestamp}`
         }, [
             domUtils.el('div', { className: 'message-avatar' }, [
                 domUtils.el('i', { className: 'fas fa-user', 'aria-hidden': 'true' })
             ]),
-            domUtils.el('div', { className: 'message-content' }, text)
+            domUtils.el('div', { className: 'message-content' }, [
+                text,
+                domUtils.el('span', { className: 'message-timestamp' }, timestamp)
+            ])
         ]);
 
         this.chatMessages.appendChild(message);
@@ -86,6 +94,7 @@ export class UIController {
      */
     addBotMessage(data) {
         const children = [];
+        const timestamp = this.getTimestamp();
         
         if (data.isAI) {
             children.push(domUtils.el('div', { className: 'ai-badge' }, [
@@ -126,11 +135,13 @@ export class UIController {
             children.push(domUtils.el('div', { className: 'interactive-options' }, options));
         }
 
+        children.push(domUtils.el('span', { className: 'message-timestamp' }, timestamp));
+
         const message = domUtils.el('div', { 
             className: 'message bot', 
             role: 'article', 
             tabindex: '-1',
-            'aria-label': 'Assistant message'
+            'aria-label': `Assistant message received at ${timestamp}`
         }, [
             domUtils.el('div', { className: 'message-avatar', 'aria-hidden': 'true' }, [
                 domUtils.el('i', { className: 'fas fa-robot' })
@@ -155,7 +166,11 @@ export class UIController {
 
     showTypingIndicator() {
         this.chatMessages.setAttribute('aria-busy', 'true');
-        const indicator = domUtils.el('div', { className: 'message bot typing-message', id: 'typing-indicator' }, [
+        const indicator = domUtils.el('div', { 
+            className: 'message bot typing-message', 
+            id: 'typing-indicator',
+            'aria-live': 'assertive'
+        }, [
             domUtils.el('div', { className: 'message-avatar', 'aria-hidden': 'true' }, [
                 domUtils.el('i', { className: 'fas fa-robot' })
             ]),

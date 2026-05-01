@@ -43,7 +43,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             process: ['process', 'how to vote', 'booth', 'step'],
             documents: ['document', 'id', 'bring', 'proof'],
             greeting: ['hi', 'hello', 'start', 'hey'],
-            faq: ['faq', 'question', 'help', 'common']
+            faq: ['faq', 'question', 'help', 'common'],
+            resources: ['resource', 'link', 'learn', 'education', 'info']
         };
 
         for (const [key, list] of Object.entries(keywords)) {
