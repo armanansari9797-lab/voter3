@@ -14,7 +14,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         chatMessages.innerHTML = '';
         showTypingIndicator();
         
-        // Fetch knowledge base from Firebase (with local fallback)
+        // Authenticate and fetch knowledge base from Firebase
+        await knowledgeService.signIn();
         kb = await knowledgeService.getKnowledgeBase();
         
         removeTypingIndicator();

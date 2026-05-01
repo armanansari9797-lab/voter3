@@ -1,0 +1,16 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Knowledge base is publicly readable by authenticated users
+    match /knowledgeBase/{document} {
+      allow read: if request.auth != null;
+      allow write: if false; // Only admins can update knowledge via console
+    }
+    
+    // Interactions can be created by authenticated users
+    match /interactions/{document} {
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow read, update, delete: if false; // Users cannot read or modify logs
+    }
+  }
+}

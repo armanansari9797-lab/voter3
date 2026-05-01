@@ -1,13 +1,27 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs, doc, setDoc, query, orderBy } from "firebase/firestore";
+import { getAuth, signInAnonymously } from "firebase/auth";
 import { firebaseConfig } from "./firebase-config.js";
 import { knowledgeBase as localKnowledgeBase } from "./data.js";
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
 export const knowledgeService = {
+    /**
+     * Signs in the user anonymously for tracking and security.
+     */
+    async signIn() {
+        try {
+            const userCredential = await signInAnonymously(auth);
+            return userCredential.user.uid;
+        } catch (error) {
+            console.error("Auth failed:", error);
+            return null;
+        }
+    },
     /**
      * Fetches the knowledge base from Firestore.
      * Falls back to local data if the fetch fails or is empty.
@@ -38,9 +52,11 @@ export const knowledgeService = {
      */
     async logInteraction(topic, inputType = "click") {
         try {
+            const userId = auth.currentUser?.uid || "anonymous";
             const logsRef = collection(db, "interactions");
             const newLogRef = doc(logsRef);
             await setDoc(newLogRef, {
+                userId,
                 topic,
                 type: inputType,
                 timestamp: new Date().toISOString(),

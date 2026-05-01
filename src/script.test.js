@@ -11,6 +11,7 @@ const knowledgeBaseText = dataJs.replace('export const knowledgeBase =', 'const 
 // Mock knowledgeService
 const mockService = `
 const knowledgeService = {
+    signIn: async () => "test-uid",
     getKnowledgeBase: async () => { ${knowledgeBaseText}; return knowledgeBase; },
     logInteraction: async () => {}
 };
