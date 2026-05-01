@@ -76,31 +76,46 @@ document.addEventListener('DOMContentLoaded', async () => {
         };
     }
 
-    const processUserInput = debounce((text) => {
+    const processUserInput = debounce(async (text) => {
         showTypingIndicator();
         
         // Log user query to Firebase
         knowledgeService.logInteraction(text.substring(0, 50), "text_input");
 
-        setTimeout(() => {
-            removeTypingIndicator();
-            const lowerText = text.toLowerCase();
-            let response = kb.unknown;
+        const lowerText = text.toLowerCase();
+        let response = null;
 
-            if (lowerText.includes('register') || lowerText.includes('sign up')) {
-                response = kb.registration;
-            } else if (lowerText.includes('time') || lowerText.includes('date') || lowerText.includes('when') || lowerText.includes('timeline')) {
-                response = kb.timeline;
-            } else if (lowerText.includes('process') || lowerText.includes('how to vote') || lowerText.includes('booth')) {
-                response = kb.process;
-            } else if (lowerText.includes('document') || lowerText.includes('id') || lowerText.includes('bring')) {
-                response = kb.documents;
-            } else if (lowerText.includes('hi') || lowerText.includes('hello') || lowerText.includes('start')) {
-                response = kb.greeting;
+        // 1. Keyword Matching (Fast & Reliable)
+        if (lowerText.includes('register') || lowerText.includes('sign up')) {
+            response = kb.registration;
+        } else if (lowerText.includes('time') || lowerText.includes('date') || lowerText.includes('when') || lowerText.includes('timeline')) {
+            response = kb.timeline;
+        } else if (lowerText.includes('process') || lowerText.includes('how to vote') || lowerText.includes('booth')) {
+            response = kb.process;
+        } else if (lowerText.includes('document') || lowerText.includes('id') || lowerText.includes('bring')) {
+            response = kb.documents;
+        } else if (lowerText.includes('hi') || lowerText.includes('hello') || lowerText.includes('start')) {
+            response = kb.greeting;
+        }
+
+        // 2. AI Fallback (Intelligent & Adopted)
+        if (!response) {
+            try {
+                // Efficiency: Lazy load AI service only when needed
+                const { aiService } = await import('./aiService.js');
+                response = await aiService.generateResponse(text, kb);
+            } catch (error) {
+                console.error("AI Fallback error:", error);
             }
+        }
 
-            addBotMessage(response);
-        }, 600); 
+        // 3. Final Fallback
+        if (!response) {
+            response = kb.unknown;
+        }
+
+        removeTypingIndicator();
+        addBotMessage(response);
     }, 300);
 
     function handleAction(actionId, source = "button_click") {
@@ -143,6 +158,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         messageDiv.setAttribute('tabindex', '-1'); 
         
         let contentHtml = `<p>${data.text}</p>`;
+        
+        if (data.isAI) {
+            contentHtml = `<div class="ai-badge"><i class="fas fa-wand-magic-sparkles"></i> Powered by Gemini AI</div>` + contentHtml;
+        }
         
         if (data.steps && data.steps.length > 0) {
             const stepsHtml = data.steps.map((step, index) => `
