@@ -1,16 +1,29 @@
-import { domUtils } from './domUtils.js';
+/**
+ * @typedef {Object} BotMessageData
+ * @property {string} text - The main response text.
+ * @property {boolean} [isAI] - Whether the response was AI-generated.
+ * @property {string[]} [steps] - Optional step-by-step instructions.
+ * @property {Object[]} [options] - Optional interactive action buttons.
+ */
 
 /**
  * UI Controller for CivicGuide.
  * Manages DOM interactions, message rendering, and accessibility.
  */
 export class UIController {
+    /**
+     * @param {Object} callbacks
+     * @param {Function} callbacks.onUserMessage
+     * @param {Function} callbacks.onAction
+     * @param {Function} callbacks.onClear
+     */
     constructor(callbacks) {
         this.chatMessages = document.getElementById('chat-messages');
         this.chatForm = document.getElementById('chat-form');
         this.userInput = document.getElementById('user-input');
         this.quickRepliesContainer = document.getElementById('quick-replies');
         this.navItems = document.querySelectorAll('.nav-item');
+        this.clearBtn = document.getElementById('clear-chat');
         
         this.callbacks = callbacks;
         this.initEventListeners();
@@ -25,6 +38,12 @@ export class UIController {
                 this.userInput.value = '';
             }
         });
+
+        if (this.clearBtn) {
+            this.clearBtn.addEventListener('click', () => {
+                this.callbacks.onClear();
+            });
+        }
 
         this.navItems.forEach(item => {
             const handleNav = () => {
@@ -44,7 +63,11 @@ export class UIController {
     }
 
     addUserMessage(text) {
-        const message = domUtils.el('div', { className: 'message user', role: 'article' }, [
+        const message = domUtils.el('div', { 
+            className: 'message user', 
+            role: 'article',
+            'aria-label': 'User message'
+        }, [
             domUtils.el('div', { className: 'message-avatar' }, [
                 domUtils.el('i', { className: 'fas fa-user', 'aria-hidden': 'true' })
             ]),
@@ -56,6 +79,9 @@ export class UIController {
         this.clearQuickReplies();
     }
 
+    /**
+     * @param {BotMessageData} data 
+     */
     addBotMessage(data) {
         const children = [];
         
@@ -98,7 +124,12 @@ export class UIController {
             children.push(domUtils.el('div', { className: 'interactive-options' }, options));
         }
 
-        const message = domUtils.el('div', { className: 'message bot', role: 'article', tabindex: '-1' }, [
+        const message = domUtils.el('div', { 
+            className: 'message bot', 
+            role: 'article', 
+            tabindex: '-1',
+            'aria-label': 'Assistant message'
+        }, [
             domUtils.el('div', { className: 'message-avatar', 'aria-hidden': 'true' }, [
                 domUtils.el('i', { className: 'fas fa-robot' })
             ]),
@@ -113,6 +144,11 @@ export class UIController {
         const firstBtn = message.querySelector('.option-btn');
         if (firstBtn) firstBtn.focus();
         else message.focus();
+    }
+
+    clearChat() {
+        this.chatMessages.innerHTML = '';
+        this.clearQuickReplies();
     }
 
     showTypingIndicator() {

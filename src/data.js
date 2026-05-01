@@ -47,22 +47,35 @@ export const knowledgeBase = {
         ]
     },
     documents: {
-        text: "You will generally need one or more of the following documents to register or vote:",
+        text: "You will generally need one or more of the following documents to register or vote. Requirements may vary by state, so always check local guidelines.",
         steps: [
-            "Government-issued Photo ID (Driver's License, Passport)",
-            "Utility bill with your name and current address",
-            "Bank statement",
-            "Birth certificate (for initial registration)"
+            "Government-issued Photo ID (Driver's License, Passport, State ID)",
+            "Utility bill with your name and current address (less than 90 days old)",
+            "Bank statement or Government check",
+            "Birth certificate or Naturalization papers (for initial registration)"
         ],
         options: [
-            { text: "How do I register?", action: "registration" }
+            { text: "How do I register?", action: "registration" },
+            { text: "Check FAQs", action: "faq" }
+        ]
+    },
+    faq: {
+        text: "Here are some common questions about the election process:",
+        steps: [
+            "Q: Can I vote if I'm away from home? A: Yes, you can request an absentee or mail-in ballot.",
+            "Q: What if I move? A: You must update your voter registration with your new address.",
+            "Q: Where is my polling place? A: You can find it on your official election commission website.",
+            "Q: Can I register on election day? A: Some states allow same-day registration, others require it weeks in advance."
+        ],
+        options: [
+            { text: "Go back to start", action: "greeting" }
         ]
     },
     unknown: {
-        text: "I'm not quite sure about that specific question, but I can help you with registration, timelines, the voting process, or required documents. What would you like to know?",
+        text: "I'm not quite sure about that specific question, but I'm learning every day! I can help you with registration, timelines, the voting process, or required documents.",
         options: [
             { text: "How do I register?", action: "registration" },
-            { text: "Voting Process", action: "process" }
+            { text: "View FAQ", action: "faq" }
         ]
     }
 };

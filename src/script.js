@@ -42,7 +42,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             timeline: ['time', 'date', 'when', 'timeline', 'schedule'],
             process: ['process', 'how to vote', 'booth', 'step'],
             documents: ['document', 'id', 'bring', 'proof'],
-            greeting: ['hi', 'hello', 'start', 'hey']
+            greeting: ['hi', 'hello', 'start', 'hey'],
+            faq: ['faq', 'question', 'help', 'common']
         };
 
         for (const [key, list] of Object.entries(keywords)) {
@@ -96,6 +97,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         },
         onAction: (actionId, source) => {
             handleAction(actionId, source);
+        },
+        onClear: () => {
+            ui.clearChat();
+            if (kb && kb.greeting) {
+                ui.addBotMessage(kb.greeting);
+            }
         }
     });
 
