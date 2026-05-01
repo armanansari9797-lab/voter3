@@ -1,3 +1,5 @@
+import { domUtils } from './domUtils.js';
+
 /**
  * @typedef {Object} BotMessageData
  * @property {string} text - The main response text.
