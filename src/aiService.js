@@ -1,6 +1,6 @@
-import { GoogleGenerativeAI } from "@google/generai";
+import { GoogleGenAI } from "@google/genai";
 
-const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
+const genAI = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY });
 
 /**
  * AI Service for CivicGuide.
@@ -14,8 +14,6 @@ export const aiService = {
      */
     async generateResponse(userPrompt, context) {
         try {
-            const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
-            
             const systemContext = `
                 You are CivicGuide, a helpful election assistant. 
                 Use the following knowledge base if relevant, but answer based on your broad knowledge of election processes if the specific question isn't there.
@@ -25,10 +23,13 @@ export const aiService = {
                 Keep your answer concise (max 3 sentences), friendly, and encouraging of civic participation.
             `;
 
-            const result = await model.generateContent([systemContext, userPrompt]);
-            const response = await result.response;
+            const result = await genAI.models.generateContent({
+                model: "gemini-3-flash-preview",
+                contents: systemContext + "\n\nUser Query: " + userPrompt
+            });
+
             return {
-                text: response.text(),
+                text: result.text || "I'm here to help with your election questions!",
                 isAI: true
             };
         } catch (error) {
