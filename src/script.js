@@ -1,12 +1,22 @@
 import { knowledgeService } from './knowledgeService.js';
 
+/**
+ * Main application logic for CivicGuide Election Assistant.
+ * Handles UI interactions, chat management, and Firebase service integration.
+ */
 document.addEventListener('DOMContentLoaded', async () => {
+    /** @type {HTMLElement} */
     const chatMessages = document.getElementById('chat-messages');
+    /** @type {HTMLFormElement} */
     const chatForm = document.getElementById('chat-form');
+    /** @type {HTMLInputElement} */
     const userInput = document.getElementById('user-input');
+    /** @type {HTMLElement} */
     const quickRepliesContainer = document.getElementById('quick-replies');
+    /** @type {NodeListOf<HTMLElement>} */
     const navItems = document.querySelectorAll('.nav-item');
 
+    /** @type {Object|null} The fetched knowledge base */
     let kb = null;
 
     // Initialize Chat

@@ -1,11 +1,11 @@
 // Firebase configuration for CivicGuide
 // Using credentials from the shared organization project
 export const firebaseConfig = {
-  apiKey: "AIzaSyAAvxwvtGgWv0BMDPp2BKGQCqHMl_cEH4A",
-  authDomain: "volunteer-org-a6bf7.firebaseapp.com",
-  projectId: "volunteer-org-a6bf7",
-  storageBucket: "volunteer-org-a6bf7.firebasestorage.app",
-  messagingSenderId: "971150272484",
-  appId: "1:971150272484:web:426f158b142653a86849f1",
-  measurementId: "G-0B7BKZ2R1Y"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
